@@ -6,4 +6,6 @@ router.get('/', (req, res) => {
   })
 })
 
+router.use('/index', require('./indices.routes'))
+
 module.exports = router

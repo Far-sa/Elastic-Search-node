@@ -827,7 +827,7 @@ legend {
   -ms-flex-align: center;
   align-items: center;
   font-family: 'Montserrat', sans-serif;
-  background: url('./images//search.jpeg');
+  background: url('/images//search.jpeg');
   background-size: cover;
   background-position: center center;
   padding: 15px;
