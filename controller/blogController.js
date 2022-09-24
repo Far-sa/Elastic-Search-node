@@ -169,3 +169,30 @@ exports.searchByRegexp = async (req, res, next) => {
     next(err)
   }
 }
+
+exports.searchByMultiRegexp = async (req, res, next) => {
+  try {
+    const { search } = req.query
+    const result = await elasticClient.search({
+      index: indexBlog,
+      query: {
+        bool: {
+          should: [
+            {
+              regexp: { title: `.*${search}.*` }
+            },
+            {
+              regexp: { text: `.*${search}.*` }
+            },
+            {
+              regexp: { author: `.*${search}.*` }
+            }
+          ]
+        }
+      }
+    })
+    res.json(result.hits.hits)
+  } catch (err) {
+    next(err)
+  }
+}
