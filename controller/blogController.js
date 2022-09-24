@@ -63,6 +63,16 @@ exports.getAllBlog = async (req, res, next) => {
 }
 exports.removeBlog = async (req, res, next) => {
   try {
+    const { id } = req.params
+    const deletedResult = await elasticClient.deleteByQuery({
+      index: indexBlog,
+      query: {
+        match: {
+          _id: id
+        }
+      }
+    })
+    return res.json(deletedResult)
   } catch (err) {
     next(err)
   }
