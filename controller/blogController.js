@@ -1,5 +1,20 @@
+const elasticClient = require('../config/elastic.config')
+
+const indexBlog = 'blog'
+
 exports.createBlog = async (req, res, next) => {
   try {
+    const { title, author, text } = req.body
+    //TODO validation
+    const result = await elasticClient.index({
+      index: indexBlog,
+      document: {
+        title,
+        text,
+        author
+      }
+    })
+    return res.json(result)
   } catch (err) {
     next(err)
   }

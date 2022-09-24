@@ -7,5 +7,6 @@ router.get('/', (req, res) => {
 })
 
 router.use('/index', require('./indices.routes'))
+router.use('/blog', require('./blog.routes'))
 
 module.exports = router
