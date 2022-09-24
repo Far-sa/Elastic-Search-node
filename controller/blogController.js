@@ -100,6 +100,7 @@ exports.updateBlog = async (req, res, next) => {
     //   body: { ...payload, ...data }
     // })
     // return res.json(updatedBlog)
+
     //* Second plan
     const { id } = req.params
     const data = req.body
@@ -120,6 +121,14 @@ exports.updateBlog = async (req, res, next) => {
 
 exports.searchByTitle = async (req, res, next) => {
   try {
+    const { title } = req.query
+    const result = await elasticClient.search({
+      index: indexBlog,
+      query: {
+        match: { title }
+      }
+    })
+    res.json(result.hits.hits)
   } catch (err) {
     next(err)
   }
@@ -132,6 +141,18 @@ exports.searchByRegexp = async (req, res, next) => {
 }
 exports.searchByMultiField = async (req, res, next) => {
   try {
+    const { search } = req.query
+    const result = await elasticClient.search({
+      index: indexBlog,
+      query: {
+        multi_match: {
+          query: search,
+          fields: ['title', 'text', 'author']
+        }
+      }
+    })
+    const blogs = result.hits.hits
+    res.json(blogs)
   } catch (err) {
     next(err)
   }
