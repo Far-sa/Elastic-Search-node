@@ -77,6 +77,33 @@ exports.removeBlog = async (req, res, next) => {
     next(err)
   }
 }
+
+exports.updateBlog = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const data = req.body
+    Object.keys(data).forEach(key => {
+      if (!data[key]) delete data[key]
+    })
+
+    const blog = (
+      await elasticClient.search({
+        index: indexBlog,
+        query: { match: { _id: id } }
+      })
+    ).hits.hits?.[0]
+    const payload = blog._source || {}
+    const updatedBlog = await elasticClient.index({
+      index: indexBlog,
+      id,
+      body: { ...payload, ...data }
+    })
+    return res.json(updatedBlog)
+  } catch (err) {
+    next(err)
+  }
+}
+
 exports.searchByTitle = async (req, res, next) => {
   try {
   } catch (err) {
