@@ -80,23 +80,37 @@ exports.removeBlog = async (req, res, next) => {
 
 exports.updateBlog = async (req, res, next) => {
   try {
+    //* first plan
+    // const { id } = req.params
+    // const data = req.body
+    // Object.keys(data).forEach(key => {
+    //   if (!data[key]) delete data[key]
+    // })
+
+    // const blog = (
+    //   await elasticClient.search({
+    //     index: indexBlog,
+    //     query: { match: { _id: id } }
+    //   })
+    // ).hits.hits?.[0]
+    // const payload = blog._source || {}
+    // const updatedBlog = await elasticClient.index({
+    //   index: indexBlog,
+    //   id,
+    //   body: { ...payload, ...data }
+    // })
+    // return res.json(updatedBlog)
+    //* Second plan
     const { id } = req.params
     const data = req.body
     Object.keys(data).forEach(key => {
       if (!data[key]) delete data[key]
     })
 
-    const blog = (
-      await elasticClient.search({
-        index: indexBlog,
-        query: { match: { _id: id } }
-      })
-    ).hits.hits?.[0]
-    const payload = blog._source || {}
-    const updatedBlog = await elasticClient.index({
+    const updatedBlog = await elasticClient.update({
       index: indexBlog,
       id,
-      body: { ...payload, ...data }
+      doc: data
     })
     return res.json(updatedBlog)
   } catch (err) {
