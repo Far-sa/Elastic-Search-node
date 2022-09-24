@@ -10,19 +10,19 @@ exports.createBlog = async (req, res, next) => {
     const { title, author, text } = req.body
     //TODO validation
     //* use CQRS sample
-    const mnResult = await Blog.create({ title, author, text })
-    if (mnResult) {
-      res.json({ message: 'successfully Done' })
-      const finalData = await Blog.aggregate([
-        { $match: {} },
-        { $project: {} },
-        { $lookup: {} },
-        { $unwind: {} },
-        { $map: {} }
-      ])
-      event.emit('saveToElastic', finalData)
-      saveToElastic()
-    }
+    // const mnResult = await Blog.create({ title, author, text })
+    // if (mnResult) {
+    //   res.json({ message: 'successfully Done' })
+    //   const finalData = await Blog.aggregate([
+    //     { $match: {} },
+    //     { $project: {} },
+    //     { $lookup: {} },
+    //     { $unwind: {} },
+    //     { $map: {} }
+    //   ])
+    //   event.emit('saveToElastic', finalData)
+    //   saveToElastic()
+    // }
     const result = await elasticClient.index({
       index: indexBlog,
       document: {
@@ -51,6 +51,12 @@ exports.saveToElastic = async (req, res, next) => {
 
 exports.getAllBlog = async (req, res, next) => {
   try {
+    const value = req.params.value
+    const blogs = await elasticClient.search({
+      index: indexBlog,
+      q: value
+    })
+    res.json(blogs.hits.hits)
   } catch (err) {
     next(err)
   }
