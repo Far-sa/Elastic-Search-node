@@ -133,12 +133,7 @@ exports.searchByTitle = async (req, res, next) => {
     next(err)
   }
 }
-exports.searchByRegexp = async (req, res, next) => {
-  try {
-  } catch (err) {
-    next(err)
-  }
-}
+
 exports.searchByMultiField = async (req, res, next) => {
   try {
     const { search } = req.query
@@ -153,6 +148,23 @@ exports.searchByMultiField = async (req, res, next) => {
     })
     const blogs = result.hits.hits
     res.json(blogs)
+  } catch (err) {
+    next(err)
+  }
+}
+
+exports.searchByRegexp = async (req, res, next) => {
+  try {
+    const { search } = req.query
+    const result = await elasticClient.search({
+      index: indexBlog,
+      query: {
+        regexp: {
+          title: `.*${search}.*`
+        }
+      }
+    })
+    res.json(result.hits.hits)
   } catch (err) {
     next(err)
   }
